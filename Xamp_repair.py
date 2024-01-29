@@ -5,8 +5,15 @@ import os
 #Sin perder los datos de la base de datos
 #Autor Llorens19
 #Fecha 29/01/2023
-#Versión 1.0
-#Programa sin testear en caso real, solo en pruebas
+#Versión 1.1
+#1.1 Solución error que no copiaba los archivos de dentro de las carpetas que seleccionábamos
+#Testeado sobre el xamp
+
+
+
+#####################################################
+#Importante, tener los servicios del xamp parados#
+#####################################################
 
 
 ruta = "C:/xampp/mysql"
@@ -113,7 +120,9 @@ def copiar_carpetas(origen, destino):
             
             #En este caso solo queremos copiar las carpetas, por tanto, si encontramos archivos no los copiamos
             if os.path.isdir(f_ruta_origen):
-                copiar_carpetas(f_ruta_origen, f_ruta_destino)
+                # copiar_carpetas(f_ruta_origen, f_ruta_destino)
+                copiar(f_ruta_origen, f_ruta_destino) #Como en este caso si queremos que se copien los archivos de dentro, usmos esta función
+
 
         print("Correcto")
     except Exception as e:
