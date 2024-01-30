@@ -1,5 +1,8 @@
 import shutil
 import os
+import tkinter as tk
+from tkinter import filedialog
+
 
 # Reparar error Xamp "error: mysql shutdown unexpectedly." de forma autmática
 #Sin perder los datos de la base de datos
@@ -16,9 +19,92 @@ import os
 #####################################################
 
 
+def borrar_carpeta(ruta):
+    try:
+        shutil.rmtree(ruta)
+        print("Correcto")
+    except Exception as e:
+        print(f"Error")
 
-import tkinter as tk
-from tkinter import filedialog
+
+def cambiar_nombre_carpeta(ruta_original, nuevo_nombre):
+    try:
+        #la función dirname nos retrocede una direccion, es decir, nos da la ruta padre de la ruta qeu le damos
+        nueva_ruta =os.path.dirname(ruta_original) + "/" + nuevo_nombre 
+
+        os.rename(ruta_original, nueva_ruta)
+
+        print(f"Correcto")
+    except Exception as e:
+        print(f"Error")
+
+def crear_carpeta(ruta, nombre_carpeta):
+    try:
+        nueva_ruta = ruta + "/" + nombre_carpeta
+        
+        os.makedirs(nueva_ruta)
+
+        print("Correcto")
+    except Exception as e:
+        print("Error")
+
+
+def copiar(origen, destino):
+    try:
+        # Si la carpeta destino no existe la creamos
+        if not os.path.exists(destino):
+            os.makedirs(destino)
+
+        # Copiar cada archivo individualmente
+        for elemento in os.listdir(origen):
+            f_ruta_origen = origen + "/" + elemento
+            f_ruta_destino = destino + "/" + elemento
+
+            #En caso de ser una carpeta, volveremos a llamar a la función para que también se copien los archivos que hay dentro de ella
+            #En caso de ser un archivo, lo copiaremos directamente 
+            if os.path.isdir(f_ruta_origen):
+                copiar(f_ruta_origen, f_ruta_destino)
+            else:
+                shutil.copy2(f_ruta_origen, f_ruta_destino)
+
+        print("Correcto")
+    except Exception as e:
+        print("Error")
+
+
+def copiar_archivo(origen, destino):
+    try:
+        shutil.copy(origen, destino)
+
+        print("Correcto")
+    except Exception as e:
+        print("Error")
+
+
+def copiar_carpetas(origen, destino):
+    try:
+        # Si la carpeta destino no existe la creamos
+        if not os.path.exists(destino):
+            os.makedirs(destino)
+
+        # Copiar solo los directorios desde la carpeta de origen a la carpeta de destino
+        for elemento in os.listdir(origen):
+            f_ruta_origen = origen + "/" + elemento
+            f_ruta_destino = destino + "/" + elemento
+            
+            #En este caso solo queremos copiar las carpetas, por tanto, si encontramos archivos no los copiamos
+            if os.path.isdir(f_ruta_origen):
+                # copiar_carpetas(f_ruta_origen, f_ruta_destino)
+                copiar(f_ruta_origen, f_ruta_destino) #Como en este caso si queremos que se copien los archivos de dentro, usmos esta función
+
+
+        print("Correcto")
+    except Exception as e:
+        print("Error")
+
+
+
+
 
 class AplicacionReparacionXamp(tk.Tk):
     def __init__(self):
@@ -49,90 +135,6 @@ class AplicacionReparacionXamp(tk.Tk):
 
     def ejecutar_reparacion(self):
         ruta = self.ruta_entry.get()
-
-        def borrar_carpeta(ruta):
-            try:
-                shutil.rmtree(ruta)
-                print("Correcto")
-            except Exception as e:
-                print(f"Error")
-
-
-        def cambiar_nombre_carpeta(ruta_original, nuevo_nombre):
-            try:
-                #la función dirname nos retrocede una direccion, es decir, nos da la ruta padre de la ruta qeu le damos
-                nueva_ruta =os.path.dirname(ruta_original) + "/" + nuevo_nombre 
-
-                os.rename(ruta_original, nueva_ruta)
-
-                print(f"Correcto")
-            except Exception as e:
-                print(f"Error")
-
-        def crear_carpeta(ruta, nombre_carpeta):
-            try:
-                nueva_ruta = ruta + "/" + nombre_carpeta
-                
-                os.makedirs(nueva_ruta)
-
-                print("Correcto")
-            except Exception as e:
-                print("Error")
-
-
-        def copiar(origen, destino):
-            try:
-                # Si la carpeta destino no existe la creamos
-                if not os.path.exists(destino):
-                    os.makedirs(destino)
-
-                # Copiar cada archivo individualmente
-                for elemento in os.listdir(origen):
-                    f_ruta_origen = origen + "/" + elemento
-                    f_ruta_destino = destino + "/" + elemento
-
-                    #En caso de ser una carpeta, volveremos a llamar a la función para que también se copien los archivos que hay dentro de ella
-                    #En caso de ser un archivo, lo copiaremos directamente 
-                    if os.path.isdir(f_ruta_origen):
-                        copiar(f_ruta_origen, f_ruta_destino)
-                    else:
-                        shutil.copy2(f_ruta_origen, f_ruta_destino)
-
-                print("Correcto")
-            except Exception as e:
-                print("Error")
-
-
-        def copiar_archivo(origen, destino):
-            try:
-                shutil.copy(origen, destino)
-
-                print("Correcto")
-            except Exception as e:
-                print("Error")
-
-
-        def copiar_carpetas(origen, destino):
-            try:
-                # Si la carpeta destino no existe la creamos
-                if not os.path.exists(destino):
-                    os.makedirs(destino)
-
-                # Copiar solo los directorios desde la carpeta de origen a la carpeta de destino
-                for elemento in os.listdir(origen):
-                    f_ruta_origen = origen + "/" + elemento
-                    f_ruta_destino = destino + "/" + elemento
-                    
-                    #En este caso solo queremos copiar las carpetas, por tanto, si encontramos archivos no los copiamos
-                    if os.path.isdir(f_ruta_origen):
-                        # copiar_carpetas(f_ruta_origen, f_ruta_destino)
-                        copiar(f_ruta_origen, f_ruta_destino) #Como en este caso si queremos que se copien los archivos de dentro, usmos esta función
-
-
-                print("Correcto")
-            except Exception as e:
-                print("Error")
-
 
 
         carpeta_borrar = "data-old"
@@ -212,8 +214,6 @@ class AplicacionReparacionXamp(tk.Tk):
         borrar_carpeta(ruta_temporal)
 
         tk.messagebox.showinfo("Reparación Xamp", "Reparación completada con éxito")
-        tk.messagebox.showinfo("Reparación Xamp", "Reparación completada con éxito")
-
 if __name__ == "__main__":
     app = AplicacionReparacionXamp()
     app.mainloop()
